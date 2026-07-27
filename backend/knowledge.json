@@ -1,0 +1,45 @@
+{
+  "gym_name": "Fitness Freak",
+
+  "membership": [
+    {
+      "name": "Basic",
+      "price": "₹999/month"
+    },
+    {
+      "name": "Pro",
+      "price": "₹1499/month"
+    }
+  ],
+
+  "timings": {
+    "weekday": "6 AM - 10 PM",
+    "sunday": "7 AM - 2 PM"
+  },
+
+  "address": "Wadgaon Sheri, Pune",
+
+  "phone": "+91XXXXXXXXXX",
+
+  "services": [
+    "Aerobics",
+    "Crossfit",
+    "Dance Fitness",
+    "HIIT",
+    "Kickboxing",
+    "Nutrition Consulting",
+    "Personal Training",
+    "Weight Training",
+    "Yoga",
+    "Zumba",
+    "Diet",
+    "Anaerobics",
+    "Group Class",
+    "Weight Management",
+    "Fitness Coach Consulting",
+    "BMI Analysis",
+    "Cardio",
+    "Strength Training",
+    "Bodybuilding"
+  ]
+}

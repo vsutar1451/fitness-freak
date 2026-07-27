@@ -1,12 +1,15 @@
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
-
+import AnimatedSection from "../common/AnimatedSection";
 function Hero() {
-  return (
+    return (
+        <AnimatedSection>
     <Box
+     id="home"
       sx={{
         minHeight: "82vh",
         display: "flex",
         alignItems: "center",
+        scrollMarginTop: "90px",
         pb: 8
       }}
     >
@@ -23,9 +26,8 @@ function Hero() {
               letterSpacing={2}
               gutterBottom
             >
-              FITNESS FREAK
+              MADNESS FOR FITNESS
             </Typography>
-
             <Typography
               variant="h2"
               fontWeight={800}
@@ -87,10 +89,16 @@ function Hero() {
                 transition: ".35s",
 
                 "&:hover": {
-                  transform: "translateY(-5px)",
-                  boxShadow: "0 15px 40px rgba(212,175,55,.5)",
+                    transform: "translateY(-4px) scale(1.03)",
+                    boxShadow:
+                        "0 15px 35px rgba(212,175,55,.30)",
                 },
               }}
+              onClick={() =>
+                  document
+                      .getElementById("contact")
+                      ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               Join Today
             </Button>
@@ -99,6 +107,11 @@ function Hero() {
               variant="outlined"
               color="primary"
               size="large"
+              onClick={() =>
+                  document
+                      .getElementById("contact")
+                      ?.scrollIntoView({ behavior: "smooth" })
+              }
               sx={{
                 px: 5,
                 py: 2,
@@ -108,8 +121,9 @@ function Hero() {
                 minWidth: 180,
 
                 "&:hover": {
-                  background: "rgba(212,175,55,.08)",
-                  transform: "translateY(-5px)",
+                    transform: "translateY(-4px) scale(1.03)",
+                    boxShadow:
+                        "0 15px 35px rgba(212,175,55,.30)",
                 },
               }}
             >
@@ -148,17 +162,16 @@ function Hero() {
 
             <Box
               component="img"
-              src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900"
-              alt="Gym"
+              src="/images/hero-gym.png"
+              alt="Fitness Freak Gym"
               sx={{
-                position: "relative",
-                zIndex: 1,
-                width: "105%",
-                maxWidth: 700,
-                borderRadius: 6,
-                boxShadow: "0 40px 80px rgba(0,0,0,.6)",
+                  width: "100%",
+                  height: 500,
+                  objectFit: "cover",
+                  borderRadius: 6,
+                  boxShadow: "0 30px 60px rgba(0,0,0,.45)",
               }}
-            />
+          />
 
           </Box>
 
@@ -167,6 +180,7 @@ function Hero() {
         </Grid>
       </Container>
     </Box>
+    </AnimatedSection>
   );
 }
 

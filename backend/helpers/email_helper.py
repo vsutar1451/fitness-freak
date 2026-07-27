@@ -1,0 +1,42 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("APP_PASSWORD")
+
+
+def send_contact_email(data):
+    message = MIMEMultipart()
+
+    message["From"] = EMAIL
+    message["To"] = "sutarvinayak2064@gmail.com"
+    message["Subject"] = "New Fitness Freak Contact Form"
+
+    body = f"""
+New Contact Form Submission
+
+Name: {data.name}
+
+Email: {data.email}
+
+Phone: {data.phone}
+
+Message:
+
+{data.message}
+"""
+
+    message.attach(MIMEText(body, "plain"))
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(EMAIL, PASSWORD)
+
+    server.send_message(message)
+
+    server.quit()

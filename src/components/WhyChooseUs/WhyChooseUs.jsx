@@ -13,6 +13,8 @@ import {
   FaClock,
 } from "react-icons/fa";
 
+import AnimatedSection from "../common/AnimatedSection";
+
 const features = [
   {
     icon: <FaDumbbell size={42} />,
@@ -38,7 +40,9 @@ const features = [
 
 function WhyChooseUs() {
   return (
+    <AnimatedSection>
     <Box
+      id="why-us"
       sx={{
         py: 12,
       }}
@@ -85,12 +89,14 @@ function WhyChooseUs() {
 
         <Grid container spacing={4}>
 
-          {features.map((item) => (
+          {features.map((item, index) => (
 
-            <Grid
-              key={item.title}
-              size={{ xs: 12, sm: 6 }}
-            >
+        <Grid
+            key={item.title}
+            size={{ xs: 12, sm: 6 }}
+        >
+
+            <AnimatedSection delay={index * 0.15}>
 
               <Paper
                 elevation={0}
@@ -102,12 +108,12 @@ function WhyChooseUs() {
                   borderRadius: 5,
                   transition: ".35s",
 
-                  "&:hover": {
+                 "&:hover": {
                     transform: "translateY(-10px)",
                     borderColor: "primary.main",
                     boxShadow:
-                      "0 20px 40px rgba(212,175,55,.15)",
-                  },
+                    "0 25px 60px rgba(212,175,55,.18)",
+                },
                 }}
               >
 
@@ -135,15 +141,17 @@ function WhyChooseUs() {
                 </Typography>
 
               </Paper>
-
+            </AnimatedSection>
             </Grid>
 
           ))}
+          
 
         </Grid>
 
       </Container>
     </Box>
+    </AnimatedSection>
   );
 }
 

@@ -1,4 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
+import AnimatedSection from "../common/AnimatedSection";
 
 const stats = [
   {
@@ -17,6 +18,7 @@ const stats = [
 
 function Stats() {
   return (
+    <AnimatedSection>
     <Box
       sx={{
         pt: 5,
@@ -60,6 +62,7 @@ function Stats() {
 
       </Container>
     </Box>
+    </AnimatedSection>
   );
 }
 

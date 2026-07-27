@@ -6,7 +6,9 @@ const theme = createTheme({
 
     primary: {
       main: "#D4AF37", // Gold
+      red: "#D62828"
     },
+
 
     secondary: {
       main: "#ffffff",

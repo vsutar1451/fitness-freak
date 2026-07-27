@@ -50,10 +50,11 @@ const plans = [
     popular: false,
   },
 ];
-
+import AnimatedSection from "../common/AnimatedSection";
 function Membership() {
   return (
-    <Box sx={{ py: 12 }}>
+    <AnimatedSection>
+    <Box sx={{ py: 12 }} id="membership">
       <Container maxWidth="lg">
 
         <Typography
@@ -94,13 +95,13 @@ function Membership() {
 
         <Grid container spacing={4}>
 
-          {plans.map((plan) => (
+          {plans.map((plan, index) => (
 
             <Grid
               key={plan.title}
               size={{ xs: 12, md: 4 }}
             >
-
+                <AnimatedSection delay={index * 0.15}>
               <Paper
                 elevation={0}
                 sx={{
@@ -119,10 +120,11 @@ function Membership() {
                   transition: ".35s",
 
                   "&:hover": {
-                    transform: "translateY(-10px)",
-                    boxShadow:
-                      "0 25px 50px rgba(212,175,55,.15)",
-                  },
+                        transform: "translateY(-10px)",
+                        borderColor: "primary.main",
+                        boxShadow:
+                            "0 25px 60px rgba(212,175,55,.18)",
+                    },
                 }}
               >
 
@@ -191,6 +193,11 @@ function Membership() {
 
                 <Button
                   fullWidth
+                  onClick={() =>
+                        document
+                            .getElementById("contact")
+                            ?.scrollIntoView({ behavior: "smooth" })
+                    }
                   variant={
                     plan.popular
                       ? "contained"
@@ -198,16 +205,24 @@ function Membership() {
                   }
                   color="primary"
                   sx={{
-                    mt: 4,
-                    py: 1.6,
-                    borderRadius: "50px",
-                    fontWeight: 700,
-                  }}
+                            mt: 4,
+                            py: 1.6,
+                            borderRadius: "50px",
+                            fontWeight: 700,
+                            transition: ".35s",
+
+                            "&:hover": {
+                                transform: "translateY(-4px) scale(1.03)",
+                                boxShadow:
+                                    "0 15px 35px rgba(212,175,55,.30)",
+                            },
+                        }}
                 >
                   Join Now
                 </Button>
 
               </Paper>
+              </AnimatedSection>
 
             </Grid>
 
@@ -217,6 +232,7 @@ function Membership() {
 
       </Container>
     </Box>
+    </AnimatedSection>
   );
 }
 
