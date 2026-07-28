@@ -8,12 +8,11 @@ from helpers.email_helper import send_contact_email
 app = FastAPI()
 
 # Allow React frontend to access this API
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
