@@ -8,14 +8,15 @@ load_dotenv()
 
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("APP_PASSWORD")
-
+SEND_EMAIL_TO = os.getenv("SEND_MESSAGE_TO")
+EMAIL_SUBJECT = os.getenv("EMAIL_SUBJECT")
 
 def send_contact_email(data):
     message = MIMEMultipart()
 
     message["From"] = EMAIL
-    message["To"] = "sutarvinayak2064@gmail.com"
-    message["Subject"] = "New Fitness Freak Contact Form"
+    message["To"] = SEND_EMAIL_TO
+    message["Subject"] = EMAIL_SUBJECT
 
     body = f"""
 New Contact Form Submission
