@@ -1,114 +1,49 @@
-import { useState } from "react";
-
+import React, { useState } from "react";
 import {
+  Alert,
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   Paper,
-  Stack,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
-
-import {
-  LocationOn,
-  Phone,
-  Email,
-  AccessTime,
-} from "@mui/icons-material";
-
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from "react-icons/fa";
+import emailjs from "@emailjs/browser";
 import AnimatedSection from "../common/AnimatedSection";
 
-const contactInfo = [
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+const contactDetails = [
   {
-    icon: <LocationOn />,
+    icon: <FaMapMarkerAlt size={20} />,
     title: "Address",
-    value: (
-      <Typography
-        component="a"
-        href="https://www.google.com/maps/dir//1st+FLOOR,+Fitness+Freak+(Wadgoansheri),+ICCHAPURTI+HOUSING+SOCIETY,+SNO-48%2F1,+Ganesh+Nagar,+Wadgaon+Sheri,+Pune,+Maharashtra+411014/data=!4m6!4m5!1m1!4e2!1m2!1m1!1s0x3bc2c129a4caf2dd:0x1b62e0a2e8345395?sa=X&ved=1t:57443&ictx=111"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-          textDecoration: "none",
-          lineHeight: 1.7,
-          color: "primary.main",
-          transition: ".3s",
-
-          "&:hover": {
-            textDecoration: "underline",
-          },
-        }}
-      >
-        1st FLOOR, ICCHAPURTI HOUSING SOCIETY,
-        <br />
-        SNO-48/1, Ganesh Nagar,
-        <br />
-        Wadgaon Sheri,
-        <br />
-        Pune, Maharashtra 411014
-      </Typography>
-    ),
+    desc: "1st FLOOR, ICCHAPURTI HOUSING SOCIETY, SNO-48/1, Ganesh Nagar, Wadgaon Sheri, Pune, Maharashtra 411014",
   },
   {
-    icon: <Phone />,
+    icon: <FaPhoneAlt size={18} />,
     title: "Phone",
-    value: (
-      <Typography
-        component="a"
-        href="tel:+919876543210"
-        sx={{
-          textDecoration: "none",
-          color: "primary.main",
-
-          "&:hover": {
-            textDecoration: "underline",
-          },
-        }}
-      >
-        +91 98765 43210
-      </Typography>
-    ),
+    desc: "+91 98765 43210",
   },
   {
-    icon: <Email />,
+    icon: <FaEnvelope size={18} />,
     title: "Email",
-    value: (
-      <Typography
-        component="a"
-        href="mailto:info@fitnessfreak.com"
-        sx={{
-          textDecoration: "none",
-          color: "primary.main",
-
-          "&:hover": {
-            textDecoration: "underline",
-          },
-        }}
-      >
-        info@fitnessfreak.com
-      </Typography>
-    ),
+    desc: "info@fitnessfreak.com",
   },
   {
-    icon: <AccessTime />,
+    icon: <FaClock size={18} />,
     title: "Working Hours",
-    value: (
-      <Typography
-        component="a"
-        sx={{
-          textDecoration: "none",
-          color: "primary.main"
-        }}
-      >
-        Mon - Sat : 6:00 AM - 10:00 PM
-      </Typography>
-    ),
+    desc: "Mon – Sat : 6:00 AM – 10:00 PM",
   },
 ];
 
 function Contact() {
+  // Form input state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -116,276 +51,393 @@ function Contact() {
     message: "",
   });
 
-  const [errors, setErrors] = useState({});
+  // UI state for loading & alert popups
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
+  // Update form values dynamically
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const validate = () => {
-    const newErrors = {};
+  // Submit Handler using EmailJS
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Full Name is required";
+    // Basic Validation
+    if (!formData.name || !formData.phone || !formData.message) {
+      setStatus({
+        open: true,
+        message: "Please fill out all required fields (*).",
+        severity: "error",
+      });
+      return;
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Mobile Number is required";
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid 10-digit mobile number";
-    }
+    setLoading(true);
 
-    if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
+    emailjs
+      .send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          title: "New Fitness Freak Contact Form Submission",
+          name: formData.name,
+          email: formData.email,
+          message: `Phone: ${formData.phone} | Message: ${formData.message}`,
+          time: new Date().toLocaleTimeString(),
+        },
+        EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        () => {
+          setLoading(false);
+          setStatus({
+            open: true,
+            message: "Message sent successfully! We will contact you soon.",
+            severity: "success",
+          });
+          // Reset fields after successful submit
+          setFormData({ name: "", email: "", phone: "", message: "" });
+        },
+        (error) => {
+          setLoading(false);
+          console.error("EmailJS Error:", error);
+          setStatus({
+            open: true,
+            message: "Failed to send message. Please try again later.",
+            severity: "error",
+          });
+        }
+      );
   };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!validate()) return;
-
-  setLoading(true);
-
-  try {
-    console.log(import.meta.env.VITE_API_URL)
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-
-    alert(data.message);
-
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
-  } catch (error) {
-    console.error(error);
-    alert("Something went wrong.");
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <AnimatedSection>
-  <Box
-    id="contact"
-    sx={{
-      py: 12,
-      bgcolor: "#111",
-    }}
-  >
-    <Container maxWidth="lg">
-      <Typography
-        align="center"
-        color="primary.main"
+      <Box
+        id="contact"
         sx={{
-          letterSpacing: 3,
-          fontWeight: 700,
+          py: { xs: 8, md: 14 },
+          background: "linear-gradient(180deg, #0A0A0A 0%, #121212 100%)",
         }}
       >
-        CONTACT US
-      </Typography>
+        <Container maxWidth="lg">
+          {/* Tagline */}
+          <Typography
+            align="center"
+            sx={{
+              color: "#D4AF37",
+              letterSpacing: 3,
+              fontWeight: 800,
+              fontSize: "0.85rem",
+              textTransform: "uppercase",
+              mb: 1,
+            }}
+          >
+            CONTACT US
+          </Typography>
 
-      <Typography
-        variant="h3"
-        align="center"
-        sx={{
-          mt: 2,
-          mb: 2,
-          fontWeight: 800,
-        }}
-      >
-        Let's Start Your Fitness Journey
-      </Typography>
+          {/* Title */}
+          <Typography
+            variant="h3"
+            align="center"
+            sx={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 900,
+              color: "#FFFFFF",
+              fontSize: { xs: "2.25rem", sm: "3rem", md: "3.5rem" },
+              letterSpacing: "-0.01em",
+              textTransform: "uppercase",
+              mb: 2,
+            }}
+          >
+            LET'S START YOUR{" "}
+            <Box component="span" sx={{ color: "#D4AF37" }}>
+              FITNESS JOURNEY
+            </Box>
+          </Typography>
 
-      <Typography
-        align="center"
-        color="text.secondary"
-        sx={{
-          maxWidth: 700,
-          mx: "auto",
-          mb: 8,
-        }}
-      >
-        Have questions about memberships or training?
-        Fill out the form and our team will get back to you shortly.
-      </Typography>
+          {/* Subtitle */}
+          <Typography
+            align="center"
+            sx={{
+              maxWidth: 620,
+              mx: "auto",
+              mb: 8,
+              color: "#9CA3AF",
+              fontWeight: 300,
+              fontSize: { xs: "0.95rem", sm: "1.1rem" },
+              lineHeight: 1.6,
+            }}
+          >
+            Have questions about memberships or training? Fill out the form and our team will get back to you shortly.
+          </Typography>
 
-      <Grid container spacing={5}>
-        {/* Left Side */}
-
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Stack spacing={3}>
-            {contactInfo.map((item) => (
-              <Paper
-                key={item.title}
-                elevation={0}
+          <Grid container spacing={4} alignItems="stretch">
+            {/* LEFT COLUMN: Contact Information Cards */}
+            <Grid size={{ xs: 12, md: 5 }}>
+              <Box
                 sx={{
                   display: "flex",
-                  gap: 2,
-                  alignItems: "center",
-                  p: 3,
-                  bgcolor: "#1A1A1A",
-                  borderRadius: 4,
-                  border: "1px solid rgba(255,255,255,.08)",
-                  transition: ".3s",
+                  flexDirection: "column",
+                  gap: 2.5,
+                  height: "100%",
+                }}
+              >
+                {contactDetails.map((item) => (
+                  <Paper
+                    key={item.title}
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      borderRadius: "18px",
+                      background: "rgba(20, 20, 20, 0.65)",
+                      backdropFilter: "blur(16px)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 2.5,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        borderColor: "rgba(212, 175, 55, 0.5)",
+                        transform: "translateX(6px)",
+                      },
+                    }}
+                  >
+                    {/* Glowing Icon Container */}
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(212, 175, 55, 0.15)",
+                        border: "1px solid rgba(212, 175, 55, 0.3)",
+                        color: "#D4AF37",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {item.icon}
+                    </Box>
 
-                  "&:hover": {
-                    borderColor: "primary.main",
-                    transform: "translateY(-8px)",
-                    boxShadow:
-                      "0 20px 45px rgba(212,175,55,.18)",
-                  },
+                    <Box>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontFamily: "'Montserrat', sans-serif",
+                          fontWeight: 800,
+                          color: "#FFFFFF",
+                          fontSize: "1rem",
+                          mb: 0.5,
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "#9CA3AF",
+                          fontWeight: 300,
+                          fontSize: "0.875rem",
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {item.desc}
+                      </Typography>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* RIGHT COLUMN: Functional Contact Form */}
+            <Grid size={{ xs: 12, md: 7 }}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 3.5, sm: 5 },
+                  borderRadius: "24px",
+                  background: "rgba(20, 20, 20, 0.65)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  height: "100%",
                 }}
               >
                 <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  autoComplete="off"
                   sx={{
-                    width: 55,
-                    height: 55,
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    bgcolor: "primary.main",
-                    borderRadius: "50%",
-                    color: "#000",
-                    flexShrink: 0,
+                    flexDirection: "column",
+                    gap: 3,
                   }}
                 >
-                  {item.icon}
-                </Box>
+                  {/* Full Name */}
+                  <TextField
+                    label="Full Name *"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{
+                      sx: { color: "#9CA3AF", "&.Mui-focused": { color: "#D4AF37" } },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        color: "#FFFFFF",
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                        "&:hover fieldset": { borderColor: "rgba(212, 175, 55, 0.4)" },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#D4AF37",
+                          boxShadow: "0 0 15px rgba(212, 175, 55, 0.2)",
+                        },
+                      },
+                    }}
+                  />
 
-                <Box>
-                  <Typography fontWeight={700}>
-                    {item.title}
-                  </Typography>
+                  {/* Email Address */}
+                  <TextField
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{
+                      sx: { color: "#9CA3AF", "&.Mui-focused": { color: "#D4AF37" } },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        color: "#FFFFFF",
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                        "&:hover fieldset": { borderColor: "rgba(212, 175, 55, 0.4)" },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#D4AF37",
+                          boxShadow: "0 0 15px rgba(212, 175, 55, 0.2)",
+                        },
+                      },
+                    }}
+                  />
 
-                  {typeof item.value === "string" ? (
-                    <Typography color="text.secondary">
-                      {item.value}
-                    </Typography>
-                  ) : (
-                    item.value
-                  )}
+                  {/* Phone Number */}
+                  <TextField
+                    label="Phone Number *"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{
+                      sx: { color: "#9CA3AF", "&.Mui-focused": { color: "#D4AF37" } },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        color: "#FFFFFF",
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                        "&:hover fieldset": { borderColor: "rgba(212, 175, 55, 0.4)" },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#D4AF37",
+                          boxShadow: "0 0 15px rgba(212, 175, 55, 0.2)",
+                        },
+                      },
+                    }}
+                  />
+
+                  {/* Message Field */}
+                  <TextField
+                    label="Message *"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    fullWidth
+                    InputLabelProps={{
+                      sx: { color: "#9CA3AF", "&.Mui-focused": { color: "#D4AF37" } },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        color: "#FFFFFF",
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                        "&:hover fieldset": { borderColor: "rgba(212, 175, 55, 0.4)" },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#D4AF37",
+                          boxShadow: "0 0 15px rgba(212, 175, 55, 0.2)",
+                        },
+                      },
+                    }}
+                  />
+
+                  {/* Send Button */}
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={loading}
+                    sx={{
+                      py: 1.75,
+                      borderRadius: "999px",
+                      backgroundColor: "#D4AF37",
+                      color: "#000000",
+                      fontWeight: 900,
+                      fontSize: "0.9rem",
+                      letterSpacing: 1.5,
+                      textTransform: "uppercase",
+                      boxShadow: "0 10px 25px rgba(212, 175, 55, 0.25)",
+                      transition: "all 0.3s ease",
+                      mt: 1,
+                      "&:hover": {
+                        backgroundColor: "#E5C158",
+                        transform: "scale(1.02)",
+                        boxShadow: "0 15px 35px rgba(212, 175, 55, 0.4)",
+                      },
+                    }}
+                  >
+                    {loading ? <CircularProgress size={24} color="inherit" /> : "Send Message"}
+                  </Button>
                 </Box>
               </Paper>
-            ))}
-          </Stack>
-        </Grid>
+            </Grid>
+          </Grid>
 
-        {/* Right Side */}
-
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Paper
-            component="form"
-            onSubmit={handleSubmit}
-            elevation={0}
-            sx={{
-              p: 5,
-              bgcolor: "#1A1A1A",
-              borderRadius: 5,
-              border: "1px solid rgba(255,255,255,.08)",
-            }}
+          {/* Feedback Popup Notification */}
+          <Snackbar
+            open={status.open}
+            autoHideDuration={5000}
+            onClose={() => setStatus({ ...status, open: false })}
           >
-            <Stack spacing={3}>
-              <TextField
-                name="name"
-                label="Full Name"
-                fullWidth
-                required
-                value={formData.name}
-                onChange={handleChange}
-                error={!!errors.name}
-                helperText={errors.name}
-              />
-
-              <TextField
-                name="email"
-                label="Email Address"
-                type="email"
-                fullWidth
-                value={formData.email}
-                onChange={handleChange}
-              />
-
-              <TextField
-                name="phone"
-                label="Phone Number"
-                fullWidth
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                error={!!errors.phone}
-                helperText={errors.phone}
-              />
-
-              <TextField
-                name="message"
-                label="Message"
-                multiline
-                rows={5}
-                fullWidth
-                required
-                value={formData.message}
-                onChange={handleChange}
-                error={!!errors.message}
-                helperText={errors.message}
-              />
-
-<Button
-  type="submit"
-  variant="contained"
-  color="primary"
-  size="large"
-  disabled={loading}
-  sx={{
-    alignSelf: "center",
-    px: 5,
-    py: 1.5,
-    borderRadius: "50px",
-    fontWeight: 700,
-    transition: ".35s",
-
-    "&:hover": {
-      transform: "translateY(-4px) scale(1.03)",
-      boxShadow: "0 15px 35px rgba(212,175,55,.30)",
-    },
-  }}
->
-  {loading ? "Sending..." : "Send Message"}
-</Button>
-            </Stack>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
-  </Box>
-</AnimatedSection>
-);
+            <Alert
+              onClose={() => setStatus({ ...status, open: false })}
+              severity={status.severity}
+              sx={{ width: "100%" }}
+            >
+              {status.message}
+            </Alert>
+          </Snackbar>
+        </Container>
+      </Box>
+    </AnimatedSection>
+  );
 }
 
 export default Contact;
