@@ -16,6 +16,7 @@ import {
 
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import GymLogoIcon from "/src/components/Logo/Logo"; // Import the GymLogoIcon component
 
 // Custom Vector SVG Logo Component
 function LogoIcon() {
@@ -105,7 +106,7 @@ function Navbar() {
               }}
             >
               {/* SVG Logo Icon */}
-              <LogoIcon />
+              <GymLogoIcon width={46} height={46} />
 
               {/* Brand Name Typography */}
               <Typography
@@ -113,7 +114,7 @@ function Navbar() {
                 sx={{
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 900,
-                  color: "#FFFFFF",
+                  color: "#D4AF37",
                   letterSpacing: 1.5,
                   textTransform: "uppercase",
                   display: "flex",
@@ -121,7 +122,7 @@ function Navbar() {
                 }}
               >
                 FITNESS{" "}
-                <Box component="span" sx={{ color: "#D4AF37", ml: 0.75 }}>
+                <Box component="span" sx={{ color: "#c4271f", ml: 0.75 }}>
                   FREAK
                 </Box>
                 <Box
@@ -256,7 +257,7 @@ function Navbar() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <LogoIcon />
+            <GymLogoIcon width={46} height={46} />
             <Typography
               variant="h6"
               sx={{

@@ -8,6 +8,7 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from "react-icons/fa";
+import GymLogoIcon from "/src/components/Logo/Logo"; // Import the GymLogoIcon component
 
 // Logo SVG Component (Matching Navbar)
 function LogoIcon() {
@@ -84,23 +85,22 @@ function Footer() {
                 mb: 2.5,
               }}
             >
-              <LogoIcon />
+              <GymLogoIcon width={46} height={46} />
               <Typography
                 variant="h6"
                 sx={{
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 900,
-                  color: "#FFFFFF",
+                  color: "#D4AF37",
                   letterSpacing: 1.5,
                   textTransform: "uppercase",
                 }}
               >
                 FITNESS{" "}
-                <Box component="span" sx={{ color: "#D4AF37" }}>
+                <Box component="span" sx={{ color: "#c4271f" }}>
                   FREAK
                 </Box>
                 <Box component="span" sx={{ color: "#D4AF37" }}>
-                  .
                 </Box>
               </Typography>
             </Box>

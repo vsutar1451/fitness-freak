@@ -52,7 +52,7 @@ function Hero() {
               textTransform: "uppercase",
             }}
           >
-            The Pinnacle of Strength & Conditioning
+            MADNESS FOR FITNESS
           </Box>
 
           {/* Main Headline */}
